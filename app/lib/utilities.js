@@ -5,8 +5,7 @@ const utils = {
   },
 
   randomTime: function() {
-    const myNumber = Math.floor(Math.random() * 7);
-    return myNumber * 30 + 15;
+    return Math.floor(Math.random() * 7) + 1;
   },
 
   getRandomSkill: function() {

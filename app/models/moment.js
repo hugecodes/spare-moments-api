@@ -9,6 +9,8 @@ const MomentSchema = new Schema({
   length: Number,
   description: String,
   volunteer: String,
+  title: String,
+  image: String,
 });
 
 module.exports = mongoose.model('Moment', MomentSchema);

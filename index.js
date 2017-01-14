@@ -11,8 +11,14 @@ const Moment = require('./app/models/moment');
 
 mongoose.connect('mongodb://spare-moments:loweredexpectations@ds163698.mlab.com:63698/spare-moments');
 
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 const port = process.env.PORT || 8080;
 
@@ -30,15 +36,14 @@ router.route('/users')
   .post((req, res) => {
     let user = new User();
     user.name = req.body.name;
-    user.profilePic = faker.image.avatar();
+    user.profilePic = req.body.profilePic;
     user.skills = req.body.skills;
 
-    user.save((err) => {
+    user.save((err, user) => {
       if (err) {
         res.send(err)
       }
-
-      res.json({ message: 'User Created' });
+      res.json({ message: 'User Created', id: user._id });
     });
   })
   // api/users/ GET
@@ -92,13 +97,16 @@ router.route('/moments')
   })
   .post((req, res) => {
     let moment = new Moment();
+    let skillValue = utils.getRandomSkill()
     moment.name =faker.name.findName()
     moment.name = faker.name.findName();
     moment.address = `${faker.address.streetAddress()}, ${faker.address.city()} ${faker.address.country()}`;
-    moment.skill = utils.getRandomSkill();
+    moment.skill = skillValue;
     moment.dateTime = utils.getADate();
     moment.length = utils.randomTime();
     moment.description = faker.lorem.paragraph();
+    moment.image = faker.internet.avatar();
+    moment.title = `${skillValue} stuff`;
 
     moment.save((err) => {
       if (err) {
